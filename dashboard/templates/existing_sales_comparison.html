@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Comparison</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<style>
+    @media print {
+        body {
+            font-family: Arial, sans-serif;
+            color: black;
+            background-color: white;
+        }
+
+        /* Make sure images are fully visible */
+        img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Ensure the layout is suitable for printing */
+        .container {
+            width: 100%;
+            padding: 0;
+        }
+
+        /* Hide elements that shouldn't appear in the print version */
+        .no-print, .social-share-buttons, #download-image {
+            display: none;
+        }
+    }
+</style>
+
+<body>
+    <div class="container">
+      <!-- Button to download as image -->
+<button id="download-image" class="btn btn-primary my-2 no-print">Download as Image</button>
+
+<!-- Button to download as PDF -->
+<button id="download-pdf" class="btn btn-primary my-2 no-print">Download as PDF</button>
+
+        <div class="social-share-buttons">
+            <button class="btn btn-info" onclick="shareOnFacebook()">Share on Facebook</button>
+            <button class="btn btn-info" onclick="shareOnTwitter()">Share on Twitter</button>
+            <button class="btn btn-info" onclick="shareOnLinkedIn()">Share on LinkedIn</button>
+        </div>
+        
+        <!-- Display charts if available -->
+        {% if fig_html %}
+            <h2 class="my-4">Sales Comparison Chart</h2>
+            <div>
+                {{ fig_html|safe }}
+            </div>
+            <h2 class="my-4">Sales Difference Chart</h2>
+            <div>
+                {{ fig_diff_html|safe }}
+            </div>
+        {% endif %}
+
+        <!-- Display comparison DataFrame if available -->
+        {% if comparison_df %}
+            <h2 class="my-4">Sales Data Comparison</h2>
+            <div>
+                {{ comparison_df|safe }}
+            </div>
+        {% endif %}
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+
+    <script>
+        // Capture and download as Image
+document.getElementById('download-image').addEventListener('click', function() {
+    html2canvas(document.body, {
+        useCORS: true,  // Enable CORS to capture images from external sources
+        logging: true,  // Enable logging for debugging
+        scale: 2,       // Increase the scale for higher resolution images
+        allowTaint: true // Allow tainted canvases (needed for certain images)
+    }).then(function(canvas) {
+        // Create an image from the captured canvas
+        const imgData = canvas.toDataURL('image/png');  // PNG format
+        
+        // Create an anchor tag to download the image
+        const link = document.createElement('a');
+        link.href = imgData;
+        link.download = 'dashboard-image.png';  // Set the file name
+        link.click();  // Trigger the download
+    });
+});
+
+// Capture and download as PDF
+document.getElementById('download-pdf').addEventListener('click', function() {
+    html2canvas(document.body, {
+        useCORS: true,  // Enable CORS to capture images from external sources
+        logging: true,  // Enable logging for debugging
+        scale: 2,       // Increase the scale for higher resolution images
+        allowTaint: true // Allow tainted canvases (needed for certain images)
+    }).then(function(canvas) {
+        // Create a jsPDF instance
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF('p', 'mm', 'a4');  // A4 paper size
+
+        // Convert the canvas to an image (base64)
+        const imgData = canvas.toDataURL('image/png');
+
+        // Add the image to the PDF (x, y, width, height)
+        pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);  // A4 size in mm (210mm x 297mm)
+
+        // Save the PDF to download
+        pdf.save('dashboard.pdf');
+    });
+});
+
+        
+    </script>
+    <script>
+        function shareOnFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+    
+        function shareOnTwitter() {
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+        }
+    
+        function shareOnLinkedIn() {
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}`, '_blank');
+        }
+    </script>
+    
+</body>
+</html>

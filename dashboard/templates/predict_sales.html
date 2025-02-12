@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sales Prediction</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+    <style>
+        /* Custom styling for the page */
+        body {
+            background-color:#ebeef2;
+            color: #fff;
+            font-family: 'Poppins', sans-serif;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+            scroll-behavior: smooth;
+        }
+
+        .table th {
+            color: white;
+            background-color:#174f91 /* Table heading color */
+        }
+
+        .heading-container {
+            font-size: 1.8rem;
+            font-weight: bold;
+            text-align: center;
+            padding: 20px;
+            color: #174f91;
+        }
+
+        /* Optional: Dark Mode Styles */
+        body.dark-mode {
+            background-color: #2c2c2c;
+            color: white;
+        }
+
+        .dark-mode .table {
+            background-color: #444;
+            color: white;
+        }
+
+        .dark-mode .btn {
+            background-color: #444;
+            color: white;
+        }
+
+        .dark-mode .heading-container {
+            color: white;
+        }
+
+        .dropdown-download {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            border: none;
+            border-radius: 50%;
+            padding: 10px 15px; 
+            cursor: pointer;
+            font-size: 1.2rem;
+            z-index: 1000;
+        }
+
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #333;
+            border: none;
+            border-radius: 50%;
+            padding: 10px 15px;
+            color: #fff;
+            cursor: pointer;
+            font-size: 1.2rem;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+        }
+        .theme-toggle i {
+            transition: transform 0.3s ease;
+        }
+        .custom-heading {
+            color: black;
+            text-align:center;
+        }
+        .dark-mode .custom-heading{
+            color: white;
+        }
+        .uploaded-file-name {
+            color: black; /* Default color for light mode */
+          }
+          
+          @media (prefers-color-scheme: dark) {
+            .uploaded-file-name {
+              color: white; /* Color for dark mode */
+            }
+          }
+          
+
+        
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-sun"></i>
+    </button>
+
+<div class="heading-container">
+    <h1>Sales Prediction</h1>
+    
+</div>
+<a href="{% url 'upload_and_visualize' %}" class="btn btn-primary enter-button ml-4">
+    <i class="fas fa-arrow-left"></i> Back
+</a>
+
+<div class="dropdown-download d-flex flex-column mt-5 p-0">
+
+    <div class="dropdown my-2">
+       <button class="btn btn-primary dropdown-toggle" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+           <i class="fas fa-download"></i> 
+       </button>
+       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="downloadDropdown" style="left: -400%;">
+           <li>
+               <a class="dropdown-item" id="download-image">
+                   <i class="fas fa-image" style="color: #007bff;"></i> Download as Image
+               </a>
+           </li>
+           <li>
+               <a class="dropdown-item" id="download-pdf">
+                   <i class="fas fa-file-pdf" style="color: #dc3545;"></i> Download as PDF
+               </a>
+           </li>
+       </ul>
+   </div>
+   
+   
+   <div class="dropdown ">
+       <button class="btn btn-primary dropdown-toggle" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+           <i class="fas fa-share-alt"></i> 
+       <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdown" style="left: -350%;">
+           <li>
+               <a class="dropdown-item" onclick="shareOnFacebook()">
+                   <i class="fab fa-facebook-f" style="color: #3b5998;"></i> Facebook
+               </a>
+           </li>
+           <li>
+               <a class="dropdown-item" onclick="shareOnTwitter()">
+                   <i class="fab fa-twitter" style="color: #1DA1F2;"></i> Twitter
+               </a>
+           </li>
+           <li>
+               <a class="dropdown-item" onclick="shareOnLinkedIn()">
+                   <i class="fab fa-linkedin-in" style="color: #0077B5;"></i> LinkedIn
+               </a>
+           </li>
+           <li>
+               <a class="dropdown-item" onclick="shareOnWhatsApp()">
+                   <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp
+               </a>
+           </li>
+       </ul>
+   </div>
+   </div>
+</div>
+
+
+<div class="container mt-4">
+
+    {% if uploaded_file_name %}
+    <div class="alert alert-info mt-4" role="alert">
+        <h6 style="color: black;">Uploaded File: {{ uploaded_file_name }}</h6>
+    </div>
+    
+ 
+        <div class="row">
+
+            <div class="col-lg-6">
+                <h3 class="custom-heading">Actual Sales </h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th><i class="fas fa-chart-line"></i> Actual Sales </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in actual_sales_table %}
+                        <tr>
+                            <td>{{ row.date }}</td>
+                            <td>&#8377;
+                                {{ row.value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+
+            <div class="col-lg-6">
+                <h3 class="custom-heading">Predicted Sales </h3>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th><i class="fas fa-chart-pie"></i> Predicted Sales </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in predicted_sales_table %}
+                        <tr>
+                            <td>{{ row.date }}</td>
+                            <td>&#8377;
+                                {{ row.value }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <h2 class="custom-heading">Sales Chart</h2>
+
+            <canvas id="salesChart" class="shadow-sm" style="width: 80%; height: 300px;"></canvas>
+        </div>
+        
+    
+    {% endif %}
+</div>
+
+
+<script>
+    const chartData = JSON.parse('{{ chart_data|escapejs }}');
+    const ctx = document.getElementById('salesChart').getContext('2d');
+    
+    const actualSales = chartData.value.slice(0, 6);
+    const predictedSales = chartData.value.slice(6);  
+    const actualDates = chartData.date.slice(0, 6);  
+    const predictedDates = chartData.date.slice(6);  
+    
+
+    const combinedDates = actualDates.concat(predictedDates);
+    
+ 
+    const chart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: combinedDates, 
+            datasets: [
+                {
+                    label: 'Actual Sales',
+                    data: actualSales,  
+                    borderColor: 'blue',  
+                    fill: false,  
+                    lineTension: 0.2,  
+                },
+                {
+                    label: 'Predicted Sales',
+                    data: Array(actualSales.length).fill(null).concat(predictedSales), 
+                    borderColor: 'orange', 
+                    fill: false, 
+                    lineTension: 0.2, 
+                    borderDash: [5, 5],  
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                x: {
+                    type: 'category',  
+                },
+                y: {
+                    beginAtZero: true,  
+                }
+            }
+        }
+    });
+</script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+
+    const themeToggleBtn = document.getElementById("themeToggle");
+    themeToggleBtn.addEventListener("click", () => {
+        document.body.classList.toggle("dark-mode");
+        document.body.classList.toggle("light-mode");
+        const icon = themeToggleBtn.querySelector("i");
+        icon.classList.toggle("fa-moon");
+        icon.classList.toggle("fa-sun");
+    });
+
+    const animateOnScroll = (entries, observer) => {
+        entries.forEach(entry => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('visible');
+                observer.unobserve(entry.target);
+            }
+        });
+    };
+
+    const observer = new IntersectionObserver(animateOnScroll, {
+        threshold: 0.05
+    });
+
+
+    document.querySelectorAll('.card').forEach(card => observer.observe(card));
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+
+
+<script>
+ 
+    function getCurrentDate() {
+        const date = new Date();
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const day = String(date.getDate()).padStart(2, '0');
+        return `${year}-${month}-${day}`;
+    }
+    
+
+    document.getElementById('download-image').addEventListener('click', function() {
+        html2canvas(document.body, {
+            useCORS: true,   
+            logging: true,   
+            scale: 2,        
+            allowTaint: true 
+        }).then(function(canvas) {
+ 
+            const imgData = canvas.toDataURL('image/png');  
+            
+  
+            const link = document.createElement('a');
+            const currentDate = getCurrentDate(); 
+            link.href = imgData;
+            link.download = `rooflight-size-sales_${currentDate}.png`;  
+            link.click();  
+        });
+    });
+    
+
+    document.getElementById('download-pdf').addEventListener('click', function() {
+        html2canvas(document.body, {
+            useCORS: true,   
+            logging: true,   
+            scale: 2,       
+            allowTaint: true 
+        }).then(function(canvas) {
+ 
+            const { jsPDF } = window.jspdf;
+            const pdf = new jsPDF('p', 'mm', 'a4');  
+    
+  
+            const imgData = canvas.toDataURL('image/png');
+    
+ 
+            pdf.addImage(imgData, 'PNG', 0, 0, 210, 297);  
+    
+    
+            const currentDate = getCurrentDate(); 
+            pdf.save(`rooflight-size-sales_${currentDate}.pdf`);
+        });
+    });
+    </script>
+    
+<script>
+    function shareOnFacebook() {
+        const url = window.location.href;
+        window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+    }
+
+    function shareOnTwitter() {
+        const url = window.location.href;
+        window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+    }
+
+    function shareOnLinkedIn() {
+        const url = window.location.href;
+        window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}`, '_blank');
+    }
+    function shareOnWhatsApp() {
+        const url = window.location.href;
+        window.open(`https://www.whatsapp.com/shareArticle?mini=true&url=${encodeURIComponent(url)}`, '_blank');
+    }
+</script> 
+
+<script type="text/javascript">
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == "success" %}
+                toastr.success("{{ message }}");
+            {% elif message.tags == "error" %}
+                toastr.error("{{ message }}");
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</script>
+
+</body>
+</html>

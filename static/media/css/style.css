@@ -1,0 +1,376 @@
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f7f9fc;
+    display: flex;
+    height: 100vh;
+    margin: 0;
+}
+
+.sidebar {
+    width: 250px;
+    background: linear-gradient(145deg, #1d72b8, #1e63a1);
+    color: white;
+    padding: 20px;
+    height: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: transform 0.3s ease;
+}
+
+.sidebar .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #fff;
+    margin-bottom: 30px;
+}
+
+/* Remove the underline from links */
+.sidebar .nav-link {
+text-decoration: none;
+text-transform: uppercase;
+}
+
+/* Add uppercase text */
+.sidebar .nav-link {
+text-transform: uppercase;
+font-weight: bold;
+}
+
+/* Smooth transition for background color and text */
+.sidebar .nav-link {
+transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Change background on hover */
+.sidebar .nav-link:hover {
+background-color: #f8f9fa; /* Light background on hover */
+
+}
+
+/* Add padding and spacing */
+.sidebar .nav-item {
+margin-bottom: 10px;
+}
+
+/* Customize active link appearance */
+.sidebar .nav-link.active {
+background-color: white;
+color: rgb(13, 13, 75);
+}
+
+.sidebar-toggler {
+    position: fixed;
+    top: 20px;
+    left: 250px;
+    background-color: #1d72b8;
+    color: white;
+    padding: 10px;
+    border: none;
+    font-size: 1.5rem;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+.sidebar.collapsed {
+    transform: translateX(-250px);
+}
+
+.sidebar.collapsed ~ .content {
+    margin-left: 0;
+}
+
+.content {
+    margin-left: 250px;
+    padding: 20px;
+    flex: 1;
+}
+
+.content-section {
+    display: none;
+}
+
+.content-section.active {
+    display: block;
+}
+
+body.light-mode {
+    background-color: #ebeef2 !important; 
+    color: #333;
+}
+
+.form-container {
+display: flex; 
+justify-content: center; 
+align-items: center; 
+}
+.form-container {
+display: flex; 
+justify-content: center; 
+align-items: center;
+}
+.form-card {
+width: 100%; 
+max-width: 500px; 
+padding: 30px;
+border-radius: 8px; 
+background-color: white;
+color:black;
+}
+
+
+.form-group {
+margin-bottom: 1.5rem; 
+color: black;
+justify-content: center;
+}
+
+
+.form-control-file {
+background-color: #d4d7da; 
+border-radius: 5px;
+padding: 10px;
+color: black;
+}
+
+
+
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #f7f9fc; 
+    color: #333;
+    transition: background 0.5s ease, color 0.5s ease;
+}
+
+body.dark-mode {
+    background: #1a1d24;
+    color: #e0e0e0;
+}
+
+
+.card {
+    background: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.card.dark-mode {
+    background: #2a2f3f;
+    color: #f0f0f0;
+}
+
+.card:hover {
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
+}
+
+.card-header {
+    background: linear-gradient(145deg, #1d72b8, #1e63a1);
+    color: white;
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+.card-body {
+    padding: 30px;
+    background-color: #fafafa;
+}
+
+
+.btn {
+    font-size: 14px;
+    padding: 12px 24px;
+    border-radius: 50px; 
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+}
+
+.btn-primary {
+    background: linear-gradient(145deg, #3498db, #2980b9);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(145deg, #2980b9, #3498db);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-success {
+    background: linear-gradient(145deg, #2ecc71, #27ae60);
+    color: white;
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(145deg, #27ae60, #2ecc71);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}
+
+.btn-danger {
+    background: linear-gradient(145deg, #e74c3c, #c0392b);
+    color: white;
+    border: none;
+}
+.btn {
+    color: white;
+}
+.btn-danger:hover {
+    background: linear-gradient(145deg, #c0392b, #e74c3c);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.15);
+}    
+.theme-toggle {
+    position: fixed;
+    top: 5px;
+    right: 20px;
+    background-color: #333;
+    border: none;
+    border-radius: 50%;
+    padding: 10px 15px;
+    color: #fff;
+    cursor: pointer;
+    font-size: 1.5rem;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+.theme-toggle:hover {
+    transform: scale(1.1);
+    background-color: #444;
+}
+
+
+.table thead {
+    background-color: #f0f0f0;
+    color: #333;
+}
+
+.table tbody {
+    background: #fff;
+}
+
+body.dark-mode .table thead {
+    background-color: #333;
+    color: #f0f0f0;
+}
+
+body.dark-mode .table tbody {
+    background: f0f0f0;
+}
+
+.modal.fade .modal-dialog {
+    transition: transform 0.1s ease-out; 
+}
+.welcome-message {
+background-color: #f8f9fa;  /* Light background */
+padding: 15px;
+border: none;
+border-radius: 15px;  /* Increased radius for more rounded corners */
+font-size: 1.25rem;
+color: #003366;  /* Navy blue text color */
+display: flex;
+align-items: center;
+justify-content: center;
+}
+
+.welcome-message i {
+margin-right: 10px;
+}
+
+.welcome-message strong {
+color: rgb(13, 13, 75);
+}
+/* Password toggle button styles */
+.password-toggle-btn {
+position: absolute;
+right: 10px;
+top: 85%;
+width: 35px;
+height: 35px;
+display: flex;
+align-items: center;
+justify-content: center;
+
+border: none;
+}
+
+/* Dark theme background for form container */
+.dark-theme .card-body {
+background-color: #333;
+color: #fff;
+}
+
+/* Dark theme input fields */
+.dark-theme .form-control {
+background-color: #444;
+color: #fff;
+border: 1px solid #555;
+}
+.form-label {
+color: #212529; /* Default color for light theme */
+}
+
+/* Dark theme adjustments */
+body.dark-theme .form-label {
+color: black; /* Label color in dark theme */
+}
+
+/* Dark theme input field adjustments */
+body.dark-theme .form-control {
+background-color: #444;
+color: #fff;
+border: 1px solid #555;
+}
+
+/* Card body background for dark theme */
+body.dark-theme .card-body {
+background-color: #333;
+color: #fff;
+}
+/* Ensure the eye toggle button aligns with the input field */
+.input-group {
+position: relative;
+}
+
+.password-toggle-btn i {
+font-size: 18px;
+color: #007bff;
+}
+
+.password-toggle-btn:focus {
+outline: none;
+box-shadow: none;
+}
+.dashboard-header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    color: #174f91;
+}
+
+.dark-mode .dashboard-header{
+    color:#f5f2f0;
+}
+#downloadAllButton {
+    transition: background-color 0.3s ease, transform 0.3s ease;
+}
+
+#downloadAllButton:hover {
+    background-color: #007bff; /* Change the background color on hover */
+    transform: scale(1.05); /* Slightly increase the size */
+}
+
+#downloadAllButton:active {
+    transform: scale(1); /* Reset size when button is clicked */
+}
+

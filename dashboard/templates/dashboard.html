@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rooflight Sales Dashboard</title>
+    {% load static%}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf/0.10.1/html2pdf.bundle.min.js"></script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link rel="stylesheet" href="{% static 'media/css/dashboard.css' %}">
+    
+</head>
+<body class="light-mode color-mute">
+
+    <button class="theme-toggle" id="themeToggle">
+        <i class="fas fa-sun"></i>
+    </button>
+
+
+    <div class="container-fluid">
+        <!-- Dashboard Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="dashboard-header">Rooflight Sales Dashboard</div>
+                <h4 class=" text-center">Overall Statistical Summary</h4>
+            </div>
+        </div>
+        <a href="{% url 'upload_and_visualize' %}" class="btn btn-primary enter-button" >
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+        <!-- Display the name of the dataset -->
+       
+        <div class="alert alert-info mt-4 mx-auto w-50 text-center" role="alert">
+            <h6 style="color: black;">Visualization for Dataset: {{ dataset_name }}</h6>
+        </div>
+        
+        
+     
+
+
+<div class="dropdown-download d-flex flex-column mt-5 p-0">
+ <!-- Download and Share Icons with Hover Dropdowns -->
+ <div class="dropdown my-2">
+    <button class="btn btn-primary dropdown-toggle" id="downloadDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-download"></i> <!-- Download icon -->
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="downloadDropdown" style="left: -400%;">
+        <li>
+            <a class="dropdown-item" id="download-image">
+                <i class="fas fa-image" style="color: #007bff;"></i> Download as Image
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" id="download-pdf">
+                <i class="fas fa-file-pdf" style="color: #dc3545;"></i> Download as PDF
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+<div class="dropdown ">
+    <button class="btn btn-primary dropdown-toggle" id="shareDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+        <i class="fas fa-share-alt"></i> 
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="shareDropdown" style="left: -350%;">
+        <li>
+            <a class="dropdown-item" onclick="shareOnFacebook()">
+                <i class="fab fa-facebook-f" style="color: #3b5998;"></i> Facebook
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" onclick="shareOnTwitter()">
+                <i class="fab fa-twitter" style="color: #1DA1F2;"></i> Twitter
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" onclick="shareOnLinkedIn()">
+                <i class="fab fa-linkedin-in" style="color: #0077B5;"></i> LinkedIn
+            </a>
+        </li>
+        <li>
+            <a class="dropdown-item" onclick="shareOnWhatsApp()">
+                <i class="fab fa-whatsapp" style="color: #25D366;"></i> WhatsApp
+            </a>
+        </li>
+    </ul>
+</div>
+</div>
+
+
+        <!-- Summary Cards -->
+        <!-- Summary Section -->
+<div class="row">
+    {% if total_regions %}
+    <div class="col-md-3">
+        <div class="card summary-card" id="card1">
+            <div class="card-body">
+                <div class="highlight-text">{{ total_regions }}</div>
+                <div class="card-title"> <i class="fas fa-globe"></i> Total Regions</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if total_product_sizes %}
+    <div class="col-md-3">
+        <div class="card summary-card" id="card2">
+            <div class="card-body">
+                <div class="highlight-text">{{ total_product_sizes }}</div>
+                <div class="card-title"> <i class="fas fa-cube"></i> Product Sizes</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if total_orders %}
+    <div class="col-md-3">
+        <div class="card summary-card" id="card3">
+            <div class="card-body">
+                <div class="highlight-text">{{ total_orders }}</div>
+                <div class="card-title">  <i class="fas fa-box"></i> Total Orders</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if total_sales %}
+    <div class="col-md-3">
+        <div class="card summary-card" id="card4">
+            <div class="card-body">
+                <div class="highlight-text">&#8377;{{ total_sales|floatformat:2 }}</div>
+                <div class="card-title"><i class="fas fa-indian-rupee-sign"></i> Total Sales</div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+
+       <!-- Charts Section -->
+<div class="row">
+    {% if charts.chart1 %}
+    <div class="col-md-5 mb-4">
+        <div class="card chart-container" id="chart1">
+            <div class="card-body">
+                {{ charts.chart1|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if charts.chart2 %}
+    <div class="col-md-7 mb-4">
+        <div class="card chart-container" id="chart2">
+            <div class="card-body">
+                {{ charts.chart2|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% if charts.chart3 %}
+    <div class="col-md-4 mb-4">
+        <div class="card chart-container" id="chart3">
+            <div class="card-body">
+                {{ charts.chart3|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if charts.chart7 %}
+    <div class="col-md-4 mb-4">
+        <div class="card chart-container" id="chart4">
+            <div class="card-body">
+                {{ charts.chart7|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if charts.chart8 %}
+    <div class="col-md-4 mb-4">
+        <div class="card chart-container" id="chart5">
+            <div class="card-body">
+                {{ charts.chart8|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% if charts.chart4 %}
+    <div class="col-md-12 mb-4">
+        <div class="card chart-container" id="chart8">
+            <div class="card-body">
+                {{ charts.chart4|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<div class="row">
+    {% if charts.forecast_chart %}
+    <div class="col-md-6 mb-4">
+        <div class="card chart-container" id="chart_forecast">
+            <div class="card-body">
+                {{ charts.forecast_chart|safe }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {% if charts.mapbox %}
+    <div class="col-md-6 mb-4">
+        <div class="card chart-container" id="mapbox_div">
+            <div class="card-body">
+                {{ charts.mapbox | safe }}
+            </div>
+        </div>
+    </div>
+{% endif %}
+
+
+
+    <script>
+        // Toggle dark/light mode
+        const themeToggleBtn = document.getElementById("themeToggle");
+        themeToggleBtn.addEventListener("click", () => {
+            document.body.classList.toggle("dark-mode");
+            document.body.classList.toggle("light-mode");
+            const icon = themeToggleBtn.querySelector("i");
+            icon.classList.toggle("fa-moon");
+            icon.classList.toggle("fa-sun");
+        });
+
+        // Intersection Observer for Animations
+        const animateOnScroll = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                    observer.unobserve(entry.target);
+                }
+            });
+        };
+
+        const observer = new IntersectionObserver(animateOnScroll, {
+            threshold: 0.05
+        });
+
+        // Target all the chart containers and cards
+        document.querySelectorAll('.card').forEach(card => observer.observe(card));
+    </script>
+
+    <script>
+        // Helper function to get current date in "YYYY-MM-DD" format
+       // Helper function to get the current date in "YYYY-MM-DD" format
+function getCurrentDate() {
+    const date = new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // Month is 0-indexed
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+}
+
+// Capture and download as Image (PNG)
+document.getElementById('download-image').addEventListener('click', function() {
+    html2canvas(document.body, {
+        useCORS: true,
+        scale: 2, // High resolution
+        logging: true, // Enable logging for debugging
+        scrollX: 0,
+        scrollY: 0,
+        height: document.documentElement.scrollHeight, // Full page height
+        width: document.documentElement.scrollWidth, // Full page width
+    }).then(function(canvas) {
+        // Create an image from the captured canvas
+        const imgData = canvas.toDataURL('image/png');
+        const link = document.createElement('a');
+        const currentDate = getCurrentDate();
+        link.href = imgData;
+        link.download = `full-page-screenshot_${currentDate}.png`;
+        link.click();
+    });
+});
+
+// Capture and download as PDF
+document.getElementById('download-pdf').addEventListener('click', function() {
+    html2pdf().from(document.body).toPdf().get('pdf').then(function (pdf) {
+        const currentDate = getCurrentDate();
+        pdf.save(`full-page-screenshot_${currentDate}.pdf`);
+    });
+});
+        </script>
+        
+    <script>
+        function shareOnFacebook() {
+            const url = window.location.href;
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`, '_blank');
+        }
+    
+        function shareOnTwitter() {
+            const url = window.location.href;
+            window.open(`https://twitter.com/intent/tweet?url=${encodeURIComponent(url)}`, '_blank');
+        }
+    
+        function shareOnLinkedIn() {
+            const url = window.location.href;
+            window.open(`https://www.linkedin.com/shareArticle?mini=true&url=${encodeURIComponent(url)}`, '_blank');
+        }
+        function shareOnWhatsApp() {
+            const url = window.location.href;
+            window.open(`https://www.whatsapp.com/shareArticle?mini=true&url=${encodeURIComponent(url)}`, '_blank');
+        }
+    </script> 
+
+</body>
+</html>

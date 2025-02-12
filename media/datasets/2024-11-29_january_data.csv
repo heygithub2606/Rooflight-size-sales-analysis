@@ -1,0 +1,11 @@
+Order_ID,Date,Product_Size,Region,Sales_Channel,Material,Quantity_Sold,Unit_Price,Total_Sales
+ORD-1004,2023-01-05,Extra Large,Europe,Distributor,Glass,2,189.51,808.2
+ORD-1011,2023-01-05,Small,North America,Online,Acrylic,13,351.46,6254.69
+ORD-1029,2023-01-08,Small,Asia-Pacific,Retail,Glass,8,242.44,2133.44
+ORD-1035,2023-01-16,Large,North America,Distributor,Acrylic,5,296.05,2065.8
+ORD-1044,2023-01-05,Large,Middle East,Distributor,Acrylic,8,404.1,3544
+ORD-1045,2023-01-13,Medium,North America,Distributor,Acrylic,8,252.05,3486.64
+ORD-1060,2023-01-12,Medium,Middle East,Retail,Glass,2,257.02,577.5
+ORD-1061,2023-01-24,Medium,iIndia,Online,Acrylic,12,490.89,4227.6
+ORD-1067,2023-01-31,Small,Africa,Retail,Acrylic,9,225.95,1620.27
+ORD-1094,2023-01-31,Small,Europe,Distributor,Acrylic,3,277.81,745.35

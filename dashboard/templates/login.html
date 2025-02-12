@@ -1,0 +1,197 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<style>
+    .body{
+        background- #eaeced;
+    }
+</style>
+    <div class="card">
+        <h2 class="card-title text-center" style="font-weight: bold; color: #1d72b8;">Login <i class="fas fa-user-lock"></i>
+            </h2>
+        <form method="POST">
+            {% csrf_token %}
+            
+            <div class="form-group mb-3">
+                <label for="{{ form.username.id_for_label }}" class="form-label" >Username</label>
+                <input type="text" name="username" value="{{ form.username.value|default_if_none:'' }}" class="form-control" placeholder = "Enter username" id="login-username">
+                <div id="login-username-error-message" class="invalid-feedback is-invalid"></div>
+            </div>
+
+            <div class="form-group mb-3">
+                <label for="{{ form.password.id_for_label }}" class="form-label" >Password</label>
+                <div class="input-group">
+                    <input type="password" name="password" class="form-control"  placeholder = "Enter password" id="login-password">
+                    <button type="button" class="btn btn-outline-secondary" id="togglePassword" tabindex="-1">
+                        <i class="fas fa-eye" id="eye-icon"></i>
+                    </button>
+                </div>
+                <div id="login-password-error-message" class="invalid-feedback"></div>
+            </div>
+
+            <div class="form-group text-center mb-4">
+                <button type="submit" class="btn btn-primary btn-block w-100">Login</button>
+                <a href="{% url 'forgot_password' %}">Forgot your password?</a>
+            </div>
+        </form>
+
+        <p class="text-center">Don't have an account? <a href="{% url 'register' %}">Register</a> | <a href="{% url 'landing' %}">Home</a></p>
+    </div>
+
+    <script>
+        const togglePassword = document.querySelector("#togglePassword");
+        const passwordField = document.querySelector("input[name='password']");
+        const eyeIcon = document.querySelector("#eye-icon");
+
+        togglePassword.addEventListener("click", function() {
+            const type = passwordField.type === "password" ? "text" : "password";
+            passwordField.type = type;
+            eyeIcon.classList.toggle("fa-eye-slash");
+        });
+    </script>
+
+    <!-- Toastr CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet" />
+
+    <!-- Toastr JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+
+    <script type="text/javascript">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    toastr.success("{{ message.message }}");
+                {% elif message.tags == "error" %}
+                    toastr.error("{{ message.message }}");
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        const loginForm = document.getElementById('loginForm');
+        const usernameField = document.getElementById('login-username');  // Correct ID for username field
+        const passwordField = document.getElementById('login-password');  // Correct ID for password field
+    
+        // Username validation logic
+        usernameField.addEventListener('input', function () {
+            const username = usernameField.value.trim();
+            const maxLength = 20;
+            let isValid = true;
+            let message = '';
+    
+            if (username.length > maxLength) {
+                usernameField.value = username.slice(0, maxLength);
+                isValid = false;
+                message = `Username cannot exceed ${maxLength} characters.`;
+            } else if (/^\s/.test(username) || /\s$/.test(username)) {
+                isValid = false;
+                message = 'Username cannot start or end with a space.';
+            } else if (username.length === 1) {
+                isValid = false;
+                message = 'Username cannot be a single character.';
+            } else if (username.length < 3) {
+                isValid = false;
+                message = 'Username must be at least 3 characters long.';
+            } else if (/^[_\.]|[_\.]$/.test(username) || /__|\.{2,}/.test(username)) {
+                isValid = false;
+                message = 'Username cannot start or end with an underscore or period, and only one underscore or period is allowed between words.';
+            }else if (!/^[a-zA-Z0-9]+([_\.][a-zA-Z0-9]+)*(\s[a-zA-Z0-9]+([_\.][a-zA-Z0-9]+)*)?$/.test(username)) {
+                isValid = false;
+                message = 'Username must only contain letters, numbers, and an underscore or period between words. Only one space between two words is allowed.';
+            }
+            else if (/^\d+$/.test(username)) {
+                isValid = false;
+                message = 'Username cannot be entirely numeric.';   
+            }
+    
+            const messageContainer = document.getElementById('login-username-error-message');  // Corrected reference
+    
+            if (!isValid) {
+                messageContainer.innerText = message;
+                usernameField.classList.add('is-invalid');
+                usernameField.classList.remove('is-valid');
+            } else {
+                messageContainer.innerText = '';
+                usernameField.classList.remove('is-invalid');
+                usernameField.classList.add('is-valid');
+            }
+        });
+    
+        // Password validation logic
+        const maxLength = 15; // Set the max length of password
+    
+        passwordField.addEventListener('input', function () {
+            let password = passwordField.value.trim();
+            let isValid = true;
+            let message = '';
+    
+            // Ensure the password doesn't exceed the max length
+            if (password.length > maxLength) {
+                password = password.slice(0, maxLength); // Truncate input to max length
+                passwordField.value = password; // Update the value in the field
+                isValid = false;
+                message = `Password cannot exceed ${maxLength} characters.`;
+            }
+            // Password validation rules
+            else if (password.length < 6) {
+                isValid = false;
+                message = 'Password must be at least 8 characters long.';
+            } else if (!/[A-Z]/.test(password)) {
+                isValid = false;
+                message = 'Password must contain at least one uppercase letter.';
+            } else if (!/[a-z]/.test(password)) {
+                isValid = false;
+                message = 'Password must contain at least one lowercase letter.';
+            } else if (!/[0-9]/.test(password)) {
+                isValid = false;
+                message = 'Password must contain at least one digit.';
+            } else if (!/[!@#\$%\^\&*\)\(+=._-]/.test(password)) {
+                isValid = false;
+                message = 'Password must contain at least one special character.';
+            }
+    
+            const passwordMessageContainer = document.getElementById('login-password-error-message');  // Corrected reference
+    
+            if (!isValid) {
+                passwordMessageContainer.innerText = message;
+                passwordField.classList.add('is-invalid');
+                passwordField.classList.remove('is-valid');
+            } else {
+                passwordMessageContainer.innerText = '';
+                passwordField.classList.remove('is-invalid');
+                passwordField.classList.add('is-valid');
+            }
+        });
+    
+         // Function to clear error messages
+         function clearLoginError() {
+            loginErrorMessage.innerText = '';
+            loginErrorMessage.classList.add('d-none');
+        }
+    
+        // Function to display login error
+       
+    });
+    
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css" rel="stylesheet">
+
+
+    <script type="text/javascript">
+        {% if messages %}
+            {% for message in messages %}
+                {% if message.tags == "success" %}
+                    toastr.success("{{ message }}");
+                {% elif message.tags == "error" %}
+                    toastr.error("{{ message }}");
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+    </script>
+{% endblock %}
